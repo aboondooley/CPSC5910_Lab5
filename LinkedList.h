@@ -7,6 +7,14 @@
 #include <string>
 #include <iostream>
 
+/**
+ * LinkedList template class
+ * The payload is a string
+ * You can use any type that you want as the key! As long as this type
+ * can be compared to zero
+ * Can return the last negative number in the LinkedList object
+ * @tparam T the data type of the key in the map/dictionary
+ */
 template<typename T>
 class LinkedList {
 public:
@@ -18,6 +26,10 @@ public:
     void add(T key, std::string payload);  // lightning fast!!
     void remove(T key);  // not so fast -- linear search
     std::string search(T key) const;  // not so fast -- linear search
+    /**
+     * Returns the last negative key that is present in the LinkedList object
+     * @return the last negative key in the LinkedList
+     */
     T getLastNegative() const; // returns the last negative value in the LL
 
 private:
@@ -36,11 +48,30 @@ private:
     ListElem *head;
 
     void clear();
+    /**
+     * Helper function for getLastNegative()
+     * @param neg the lsat negative key this far
+     * @param n the next element in the LinkedList to check
+     * @return returns the last negative number after checking the next node
+     */
     T getLastNegative(T neg, ListElem *n) const; // recursive helper
     static ListElem *copy(ListElem *headToCopy);
 
 };
+// New methods!! Lab 5 methods!!
+template<typename T>
+T LinkedList<T>::getLastNegative() const {
+    T neg = 0;
+    return getLastNegative(neg, head);
+}
+template<typename T>
+T LinkedList<T>::getLastNegative(T neg, ListElem *n) const { // recursive helper
+    if (n == nullptr) return neg;
+    if (n->key < 0) neg = n->key;
+    return getLastNegative(neg, n->next);
+}
 
+// Old methods
 template<typename T>
 LinkedList<T>::LinkedList() {
     head = nullptr;
@@ -119,16 +150,6 @@ typename LinkedList<T>::ListElem *LinkedList<T>::copy(LinkedList<T>::ListElem *h
     }
     return anchor.next;
 }
-template<typename T>
-T LinkedList<T>::getLastNegative() const {
-    T neg = 0;
-    return getLastNegative(neg, head);
-}
-template<typename T>
-T LinkedList<T>::getLastNegative(T neg, ListElem *n) const {
-    if (n == nullptr) return neg;
-    if (n->key < 0) neg =  n->key;
-    return getLastNegative(neg, n->next);
-}
+
 
 #endif //LAB5_LISTTEMPLATE_LINKEDLIST_H
