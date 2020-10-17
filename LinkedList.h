@@ -11,35 +11,36 @@
  * LinkedList template class
  * The payload is a string
  * You can use any type that you want as the key! As long as this type
- * can be compared to zero
+ * can be compared to zero - therefore it needs to be a numeric type
  * Can return the last negative number in the LinkedList object
- * @tparam T the data type of the key in the map/dictionary
+ * @tparam KeyType the data type of the key in the map/dictionary
  */
-template<typename T>
+template<typename KeyType>
 class LinkedList {
 public:
     LinkedList();
     ~LinkedList();
     LinkedList(const LinkedList &other);
-    LinkedList<T> &operator=(const LinkedList<T> &rhs);
+    LinkedList<KeyType> &operator=(const LinkedList<KeyType> &rhs);
 
-    void add(T key, std::string payload);  // lightning fast!!
-    void remove(T key);  // not so fast -- linear search
-    std::string search(T key) const;  // not so fast -- linear search
+    void add(KeyType key, std::string payload);  // lightning fast!!
+    void remove(KeyType key);  // not so fast -- linear search
+    std::string search(KeyType key) const;  // not so fast -- linear search
     /**
      * Returns the last negative key that is present in the LinkedList object
-     * @return the last negative key in the LinkedList
+     * @return the last negative key in the LinkedList returns 0 if there are
+     * no negative keys in the LinkedList
      */
-    T getLastNegative() const; // returns the last negative value in the LL
+    KeyType getLastNegative() const; // returns the last negative value in the LL
 
 private:
     struct ListElem {
-        T key;
+        KeyType key;
         std::string payload;
         ListElem *next;
 
         // convenience ctor
-        ListElem(T k, std::string p, ListElem *n) {
+        ListElem(KeyType k, std::string p, ListElem *n) {
             key = k;
             payload = p;
             next = n;
@@ -54,70 +55,70 @@ private:
      * @param n the next element in the LinkedList to check
      * @return returns the last negative number after checking the next node
      */
-    T getLastNegative(T neg, ListElem *n) const; // recursive helper
+    KeyType getLastNegative(KeyType neg, ListElem *n) const; // recursive helper
     static ListElem *copy(ListElem *headToCopy);
 
 };
 // New methods!! Lab 5 methods!!
-template<typename T>
-T LinkedList<T>::getLastNegative() const {
-    T neg = 0;
+template<typename KeyType>
+KeyType LinkedList<KeyType>::getLastNegative() const {
+    KeyType neg = 0;
     return getLastNegative(neg, head);
 }
-template<typename T>
-T LinkedList<T>::getLastNegative(T neg, ListElem *n) const { // recursive helper
-    if (n == nullptr) return neg;
+template<typename KeyType>
+KeyType LinkedList<KeyType>::getLastNegative(KeyType neg, ListElem *n) const { // recursive helper
+    if (n == nullptr) return neg; // returns 0 if no negative key is found
     if (n->key < 0) neg = n->key;
     return getLastNegative(neg, n->next);
 }
 
 // Old methods
-template<typename T>
-LinkedList<T>::LinkedList() {
+template<typename KeyType>
+LinkedList<KeyType>::LinkedList() {
     head = nullptr;
 }
-template<typename T>
-LinkedList<T>::~LinkedList() {
+template<typename KeyType>
+LinkedList<KeyType>::~LinkedList() {
     clear();
 }
-template<typename T>
-LinkedList<T>::LinkedList(const LinkedList<T> &other) {
+template<typename KeyType>
+LinkedList<KeyType>::LinkedList(const LinkedList<KeyType> &other) {
     head = copy(other.head);
 }
-template<typename T>
-LinkedList<T> &LinkedList<T>::operator=(const LinkedList<T> &rhs) {
+template<typename KeyType>
+LinkedList<KeyType> &LinkedList<KeyType>::operator=(const LinkedList<KeyType> &rhs) {
     if (&rhs != this) {
         clear();
         head = copy(rhs.head);
     }
     return *this;
 }
-template<typename T>
-void LinkedList<T>::clear() {
+template<typename KeyType>
+void LinkedList<KeyType>::clear() {
     while (head != nullptr) {
         ListElem *toDelete = head;
         head = head->next;
         delete toDelete;
     }
 }
-template<typename T>
-void LinkedList<T>::add(T key, std::string payload) {
+template<typename KeyType>
+void LinkedList<KeyType>::add(KeyType key, std::string payload) {
     if (payload == "")
         throw std::invalid_argument("Cannot have a payload of empty string "
                                   "(means "
                                "not found when returned from search)");
     head = new ListElem(key, payload, head);
 }
-template<typename T>
-std::string LinkedList<T>::search(T key) const {
+template<typename KeyType>
+std::string LinkedList<KeyType>::search(KeyType key) const {
     for (ListElem *cur = head; cur != nullptr; cur = cur->next) {
         if (cur->key == key)
             return cur->payload;
     }
     return ""; // Empty string means not found
 }
-template<typename T>
-void LinkedList<T>::remove(T key) {
+template<typename KeyType>
+void LinkedList<KeyType>::remove(KeyType key) {
     if (head == nullptr)
         return;
 
@@ -140,8 +141,8 @@ void LinkedList<T>::remove(T key) {
         prior = prior->next;
     }
 }
-template<typename T>
-typename LinkedList<T>::ListElem *LinkedList<T>::copy(LinkedList<T>::ListElem *headToCopy) {
+template<typename KeyType>
+typename LinkedList<KeyType>::ListElem *LinkedList<KeyType>::copy(LinkedList<KeyType>::ListElem *headToCopy) {
     ListElem anchor(0, "", nullptr), *source, *tail;
     tail = &anchor;
     for (source = headToCopy; source != nullptr; source = source->next) {
